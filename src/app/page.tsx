@@ -1,113 +1,168 @@
+"use client";
+import { useEffect } from "react";
 import Image from "next/image";
+import { useFormStore } from "@/store/form-store";
+import { CourseworkDisplay } from "@/components/coursework-display";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+import multiple_star from "@/assets/multiple_star.svg";
+import upload_file from "@/assets/upload_file.svg";
+import poster from "@/assets/Image.svg";
 
 export default function Home() {
+  const {
+    file, course, subject, essayTitle, error,
+    setFile, setCourse, setSubject, setEssayTitle, setError,
+    saveToLocalStorage, loadFromLocalStorage, analyzeDocument, saveData
+  } = useFormStore();
+
+  useEffect(() => {
+    loadFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    saveToLocalStorage();
+  }, [file, course, subject, essayTitle]);
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const droppedFile = event.dataTransfer.files[0];
+    if (droppedFile) {
+      validateAndSetFile(droppedFile);
+    }
+  };
+
+  const validateAndSetFile = (file: File | null) => {
+    if (file) {
+      if (file.size > 25 * 1024 * 1024) {
+        setError("File is too large, must be under 25 MB.");
+        setFile(null);
+      } else if (!file.name.match(/\.(pdf|docx)$/)) {
+        setError("Invalid file type. Only PDF and DOCX are allowed.");
+        setFile(null);
+      } else {
+        setError("");
+        setFile(file);
+      }
+    }
+  };
+
+  const { toast } = useToast()
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  // const handleEvaluate = async () => {
+  //   if (file) {
+  //     try {
+  //       await analyzeDocument(file);
+  //       toast({
+  //         title: "Success!",
+  //         description: "Document analyzed successfully.",
+  //       });
+  //     } catch (error) {
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Uh oh! Something went wrong.",
+  //         description: `There was a problem with your request: ${(error as Error).message}`,
+  //         action: <ToastAction altText="Try again">Try again</ToastAction>,
+  //       });
+  //     }
+  //   }
+  // };
+
+  const handleEvaluate = () => {
+    if (file) {
+      analyzeDocument(file);
+      const analyzedData = {
+        coursework_id: Date.now(),
+        document: file.name.split('.').pop() || '',
+        coursework_type: course,
+        subject: subject,
+        title: essayTitle,
+        sub_title: 'First paragraph summary...',
+        time: 18,
+        words_count: 2388,
+        score: '7/7',
+        language: 'English'
+        
+      };
+      saveData(analyzedData);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+  };
+
+  const isFormComplete = file && course && subject && essayTitle;
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="bg-[#e5ecf3]">
+      <div className="sm:mx-40 p-10 flex justify-between gap-10">
+        <div>
+          <h1 className="text-3xl font-semibold">
+            Hey IB Folks! Unsure about the quality of your answers? <br />
+            <span className="text-[#6947BF] font-bold"> We get you.</span>
+          </h1>
+          <div className="bg-[#f5f7fa] rounded-2xl border-[1px] mt-4 p-4">
+            <div onDrop={handleDrop} onDragOver={handleDragOver} className="drag-drop border-[1px] rounded-2xl p-4 text-center cursor-pointer">
+              <Image src={upload_file} alt="upload file" />
+              <h2>Drag and drop a PDF or DOCX</h2>
+              <h4>Limit 25 MB per file</h4>
+              <Button variant="outline_link" onClick={() => document.getElementById("fileInput")?.click()}>
+                Upload your file
+              </Button>
+              <input id="fileInput" type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => validateAndSetFile(e.target.files ? e.target.files[0] : null)} />
+            </div>
+            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {file && <p className="text-green-500 mt-2">File: {file.name}</p>}
+            <h3>Select your course & subjects*</h3>
+            <div className="flex flex-row gap-5">
+              <Select onValueChange={(value) => setCourse(value)} value={course}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Coursework Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Physic HL">Physic HL</SelectItem>
+                  <SelectItem value="Chemistry">Chemistry</SelectItem>
+                  <SelectItem value="Biology">Biology</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select onValueChange={(value) => setSubject(value)} value={subject}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Subject" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Science">Science</SelectItem>
+                  <SelectItem value="Maths">Maths</SelectItem>
+                  <SelectItem value="Computer">Computer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <h3 className="mt-4">Enter your essay title*</h3>
+            <div className="flex flex-row gap-5">
+              <Input placeholder="How nation works...." className="w-[380px]" value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
+            </div>
+
+            <Button variant={isFormComplete ? "default" : "gray"} className="inline-flex mt-4 gap-2" disabled={!isFormComplete} onClick={handleEvaluate}>
+              <Image className="-ml-2" src={multiple_star} width={18} height={18} alt="button" />
+              Evaluate your Score
+            </Button>
+          </div>
+        </div>
+        <div className="hidden md:block content-end">
+          <Image className="" src={poster} alt="Poster" />
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <CourseworkDisplay />
+    </div>
   );
 }
