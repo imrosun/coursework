@@ -2,7 +2,23 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, clone the repository:
+
+```bash
+git clone https://github.com/imrosun/coursework.git
+cd coursework
+# or 
+download zip from Green background <> Code button.
+```
+Second, Install dependencies: 
+
+```bash
+npm install 
+# or
+yarn install
+```
+
+Third, run the development server:
 
 ```bash
 npm run dev
