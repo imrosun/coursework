@@ -1,19 +1,18 @@
-// pages/index.tsx
 "use client";
-
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { useFormStore } from "@/store/form-store";
-import CourseworkDisplay from "@/components/coursework-display";
+import { CourseworkDisplay } from "@/components/coursework-display";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
 import multiple_star from "@/assets/multiple_star.svg";
 import upload_file from "@/assets/upload_file.svg";
 import poster from "@/assets/Image.svg";
 
-const Home: React.FC = () => {
+export default function Home() {
   const {
     file, course, subject, essayTitle, error,
     setFile, setCourse, setSubject, setEssayTitle, setError,
@@ -51,33 +50,54 @@ const Home: React.FC = () => {
     }
   };
 
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
 
-  const handleEvaluate = async () => {
-    if (file && course && subject && essayTitle) {
-      toast({
-        title: "Evaluating...",
-        description: "Please wait while we evaluate your document.",
-        duration: 2000, // Duration of 2 seconds
-      });
+  // const handleEvaluate = async () => {
+  //   if (file) {
+  //     try {
+  //       await analyzeDocument(file);
+  //       toast({
+  //         title: "Success!",
+  //         description: "Document analyzed successfully.",
+  //       });
+  //     } catch (error) {
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Uh oh! Something went wrong.",
+  //         description: `There was a problem with your request: ${(error as Error).message}`,
+  //         action: <ToastAction altText="Try again">Try again</ToastAction>,
+  //       });
+  //     }
+  //   }
+  // };
 
-      try {
-        await analyzeDocument(file);
-        toast({
-          title: "Success!",
-          description: "Document evaluated successfully.",
-        });
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: `There was a problem with your request: ${(error as Error).message}`,
-        });
-      }
+  const handleEvaluate = () => {
+    if (file) {
+      analyzeDocument(file);
+      const analyzedData = {
+        coursework_id: Date.now(),
+        document: file.name.split('.').pop() || '',
+        coursework_type: course,
+        subject: subject,
+        title: essayTitle,
+        sub_title: 'How does the temperature of a Copper pipe affect the time it takes a magnet to fall thought',
+        time: 18,
+        words_count: 2388,
+        score: '7/7',
+        language: 'English'
+        
+      };
+      saveData(analyzedData);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
     }
   };
 
@@ -127,7 +147,7 @@ const Home: React.FC = () => {
             </div>
             <h3 className="mt-4 text-[#7A8196] text-sm">Enter your essay title*</h3>
             <div className="flex flex-row gap-5">
-              <Input placeholder="How nation works...." className="w-[380px]" value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
+              <Input placeholder="How nation works...." className="w-[380px] text-[#7A8196] " value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
             </div>
             <Button variant={isFormComplete ? "default" : "gray"} className="mt-4 gap-2" disabled={!isFormComplete} onClick={handleEvaluate}>
               <Image className="" src={multiple_star} width={18} height={18} alt="button" />
@@ -145,5 +165,3 @@ const Home: React.FC = () => {
     </div>
   );
 };
-
-export default Home;
