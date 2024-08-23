@@ -30,7 +30,7 @@ export function SidebarMobile(props: SidebarMobileProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className='flex justify-between bg-white w-full pl-4 pr-3'>
+        <div className='flex justify-between bg-white w-full pl-4 pr-3 block md:hidden'>
           <Image src={zu_icon} alt="icon" width={40} height={40} />
           <Button size='icon' variant='ghost'>
             <Menu size={20} />

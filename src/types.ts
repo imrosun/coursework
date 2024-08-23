@@ -11,4 +11,5 @@ export interface SidebarItems {
   extras?: ReactNode;
 }
 
-
+// Line 11: package.json for pdf reader
+// "type": "module",

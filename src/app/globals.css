@@ -67,33 +67,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.icon-border {
-  background-color: #7c3aed; /* Violet background */
-  border: 2px solid #7c3aed; /* Violet border */
-  border-radius: 50%; /* Rounded border */
-  padding: 4px; /* Spacing inside the border */
-  display: inline-flex; /* Align the icon within */
-  align-items: center;
-  justify-content: center;
-}
-
-#my-svg {
-  cursor: pointer;
-}
-
-#my-svg.selected #svg-path {
-  fill: white;
-}
-
-#my-svg #svg-path {
-  fill: black; /* Default fill color */
-}
-
-.selected {
-  color: white; /* Text color when selected */
-}
-
-.not-selected {
-  color: black; /* Default text color */
-}
