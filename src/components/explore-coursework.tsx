@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react"; // Import useState hook
+import { useState } from "react";
 import { useFormStore } from "@/store/form-store";
 import courseworkIcon from "@/assets/coursework.svg";
 import clockIcon from "@/assets/clock.svg";
@@ -8,30 +8,40 @@ import scoreIcon from "@/assets/marks.svg";
 import languageIcon from "@/assets/language.svg";
 import paragraph from "@/assets/paragraph.svg";
 
-export const CourseworkDisplay = () => {
+export const ExploreCoursework = () => {
   const { analyzedData } = useFormStore();
-  const [showAll, setShowAll] = useState(false); // State to control the view
+  const [selectedType, setSelectedType] = useState<string>("All");
 
-  const handleToggleShowAll = () => {
-    setShowAll((prevShowAll) => !prevShowAll);
-  };
-
-  const itemsToDisplay = showAll ? analyzedData : analyzedData.slice(0, 2); // Show all items or only the first 2
+  // Function to filter analyzed data based on selected type
+  const filteredData = selectedType === "All"
+    ? analyzedData
+    : analyzedData.filter((data) => data.coursework_type === selectedType);
 
   return (
     <div className="sm:mx-40 px-10">
-      <h2 className="mb-4 mt-4 font-bold text-[#5B6170]">My Coursework</h2>
+      <h2 className="mb-4 mt-4 font-bold text-[#5B6170]">Explore coursework</h2>
+      <nav className="mb-4 font-semibold">
+        {["All", "IA Example", "EE Example", "IO Example", "Tok Example"].map((type) => (
+          <button
+            key={type}
+            onClick={() => setSelectedType(type)}
+            className={`inline-flex gap-1 mr-4 p-2 rounded-xl text-sm ${
+              selectedType === type ? "bg-white text-[#6947BF] font-bold" : " text-[#98A1BB]"
+            }`}
+          >
+            {type}
+          </button>
+        ))}
+      </nav>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {analyzedData.length > 0 ? (
-          itemsToDisplay.map((data, index) => (
-            <div
-              key={data.coursework_id}
-              className="flex justify-between border-[1px] rounded-2xl p-4 gap-5 bg-gradient-to-r"
+        {filteredData.length > 0 ? (
+          filteredData.map((data, index) => (
+            <div key={data.coursework_id} className="flex justify-between border-[1px] rounded-2xl p-4 gap-5 bg-gradient-to-r"
               style={{
-                backgroundImage: "linear-gradient(to right, #FFFFFF 0%, #e7e5e1 90%)",
-              }}
-            >
-              <Image className="border-[1px] rounded-2xl bg-white p-2" src={paragraph} alt="paragraph" />
+                backgroundImage: 'linear-gradient(to right, #FFFFFF 0%, #e7e5e1 90%)'
+              }}>
+              <Image className="border-[1px] rounded-2xl bg-white p-2" src={paragraph} alt='paragraph' />
               <div>
                 <h1 className="text-[#3D404B] font-bold text-xl">{data.title}</h1>
                 <h3 className="text-[#7A8196]">{data.sub_title}</h3>
@@ -64,15 +74,6 @@ export const CourseworkDisplay = () => {
           <p>No documents found.</p>
         )}
       </div>
-
-      {/* View More button */}
-      {analyzedData.length > 2 && (
-        <div className="flex justify-center">
-          <button onClick={handleToggleShowAll} className="mt-4 p-2 text-sm font-bold text-[#5B6170] rounded-lg">
-            {showAll ? "Show Less" : "View all"}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

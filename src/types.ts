@@ -7,6 +7,7 @@ export interface SidebarItems {
     label: string;
     href: string;
     icon?: LucideIcon | FC<SVGProps<SVGSVGElement>> | StaticImageData; 
+    selectedIcon?: LucideIcon | FC<SVGProps<SVGSVGElement>> | StaticImageData;
   }>;
   extras?: ReactNode;
 }

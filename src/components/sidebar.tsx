@@ -8,13 +8,17 @@ import dashboardImg from '@/assets/dashboard.svg';
 import bookImg from '@/assets/book_4.svg';
 import fileImg from '@/assets/file_copy.svg';
 import questionImg from '@/assets/quiz.svg';
+import dashboardWhiteImg from '@/assets/dashboard_white.svg';
+import bookWhiteImg from '@/assets/book_4_white.svg';
+import fileWhiteImg from '@/assets/file_copy_white.svg';
+import questionWhiteImg from '@/assets/quiz_white.svg';
 
 const sidebarItems: SidebarItems = { 
   links: [
-    { label: '', href: '/', icon: dashboardImg },
-    { label: '', href: '/item/book-page', icon: bookImg },
-    { label: '', href: '/item/file-page', icon: fileImg },
-    { href: '/item/question-page', icon: questionImg, label: '' },
+    { label: '', href: '/', icon: dashboardImg, selectedIcon: dashboardWhiteImg },
+    { label: '', href: '/item/book-page', icon: bookImg, selectedIcon: bookWhiteImg },
+    { label: '', href: '/item/file-page', icon: fileImg, selectedIcon: fileWhiteImg },
+    { label: '', href: '/item/question-page', icon: questionImg, selectedIcon: questionWhiteImg },
   ],
 };
 

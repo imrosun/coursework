@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast"
 import multiple_star from "@/assets/multiple_star.svg";
 import upload_file from "@/assets/upload_file.svg";
 import poster from "@/assets/Image.svg";
+import { ExploreCoursework } from "@/components/explore-coursework";
 
 export default function Home() {
   const {
@@ -48,6 +49,13 @@ export default function Home() {
         setFile(file);
       }
     }
+  };
+
+  const resetFields = () => {
+    setFile(null);           // Reset file input
+    setCourse('');           // Reset course selection
+    setSubject('');          // Reset subject input
+    setEssayTitle('');       // Reset essay title input
   };
 
   const { toast } = useToast()
@@ -93,11 +101,10 @@ export default function Home() {
       };
       saveData(analyzedData);
       toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
+        title: "Data Saved Successfully!",
+        description: "Your coursework has been analyzed and saved successfully.",
       });
+      resetFields();
     }
   };
 
@@ -108,10 +115,10 @@ export default function Home() {
       <div className="sm:mx-40 pl-10 pr-10 pt-10 flex justify-between gap-10 mb-4">
 
         <div className="grid text-3xl font-semibold">
-          Hey IB Folks! Unsure about the quality of your answers? <br />
+          <span>Hey IB Folks! Unsure about the quality of your answers? </span>
           <span className="text-[#6947BF] font-bold"> We get you.</span>
           <div className="bg-[#f5f7fa] rounded-2xl border-[1px] mt-4 p-4">
-            <div onDrop={handleDrop} onDragOver={handleDragOver} className="border-[1px] mb-4 rounded-2xl p-4 text-center cursor-pointer">
+            <div onDrop={handleDrop} onDragOver={handleDragOver} className="border-2 border-dashed mb-4 rounded-2xl p-4 text-center cursor-pointer">
               <Image src={upload_file} alt="upload file" className="mx-auto" />
               <h2 className="text-[#7A8196] text-sm">Drag and drop a PDF or DOCX</h2>
               <h4 className="text-[#7A8196] text-sm">*Limit 25 MB per file</h4>
@@ -120,8 +127,8 @@ export default function Home() {
               </Button>
               <input id="fileInput" type="file" accept=".pdf,.docx" className="hidden" onChange={(e) => validateAndSetFile(e.target.files ? e.target.files[0] : null)} />
             </div>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {file && <p className="text-green-500 mt-2">File: {file.name}</p>}
+            {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+            {file && <p className="text-green-500 mt-2 text-sm">File: {file.name}</p>}
             <h3 className="text-[#7A8196] text-sm">Select your course & subjects*</h3>
             <div className="flex flex-row gap-5">
               <Select onValueChange={setCourse} value={course}>
@@ -129,9 +136,10 @@ export default function Home() {
                   <SelectValue placeholder="Coursework Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Physic HL">Physic HL</SelectItem>
-                  <SelectItem value="Chemistry">Chemistry</SelectItem>
-                  <SelectItem value="Biology">Biology</SelectItem>
+                  <SelectItem value="IA Example">IA Example</SelectItem>
+                  <SelectItem value="EE Example">EE Example</SelectItem>
+                  <SelectItem value="IO Example">IO Example</SelectItem>
+                  <SelectItem value="Tok Example">Tok Example</SelectItem>
                 </SelectContent>
               </Select>
               <Select onValueChange={setSubject} value={subject}>
@@ -139,15 +147,16 @@ export default function Home() {
                   <SelectValue placeholder="Subject" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Science">Science</SelectItem>
-                  <SelectItem value="Maths">Maths</SelectItem>
-                  <SelectItem value="Computer">Computer</SelectItem>
+                  <SelectItem value="Physic HL">Physic HL</SelectItem>
+                  <SelectItem value="Chemistry">Chemistry</SelectItem>
+                  <SelectItem value="Biology">Biology</SelectItem>
+                  <SelectItem value="Mathematics">Mathematics</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <h3 className="mt-4 text-[#7A8196] text-sm">Enter your essay title*</h3>
             <div className="flex flex-row gap-5">
-              <Input placeholder="How nation works...." className="w-[380px] text-[#7A8196] " value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
+              <Input placeholder="How nation works...." className="w-[380px] text-[#7A8196] focus:border-[#FF4800]" value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
             </div>
             <Button variant={isFormComplete ? "default" : "gray"} className="mt-4 gap-2" disabled={!isFormComplete} onClick={handleEvaluate}>
               <Image className="" src={multiple_star} width={18} height={18} alt="button" />
@@ -162,6 +171,7 @@ export default function Home() {
 
       </div>
       <CourseworkDisplay />
+      <ExploreCoursework />
     </div>
   );
 };

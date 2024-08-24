@@ -7,28 +7,31 @@ import { SheetClose } from './ui/sheet';
 
 interface SidebarButtonProps extends ButtonProps {
   icon?: LucideIcon | FC<SVGProps<SVGSVGElement>> | StaticImageData;
+  selectedIcon?: LucideIcon | FC<SVGProps<SVGSVGElement>> | StaticImageData;
   className?: string;
   variant?: 'default' | 'ghost' | 'secondary';
   children: React.ReactNode;
+  isSelected?: boolean;
 }
 
 export function SidebarButton({
   icon,
+  selectedIcon,
   className,
   children,
+  isSelected = false,
   ...props
 }: SidebarButtonProps) {
   const renderIcon = () => {
-    if (typeof icon === 'string') {
-      // If icon is a string, treat it as a URL and render an <img> element
-      return <img src={icon} alt="icon"  width={40} height={40}/>;
-    } else if (icon && 'src' in icon) {
-      // If icon is a StaticImageData object, render an <img> element
-      return <img src={(icon as StaticImageData).src} alt="icon" width={40} height={40} />;
-    } else if (icon) {
-      // If icon is an SVG component, render it as a React component
-      const IconComponent = icon;
-      return <IconComponent  width={40} height={40} className="" />;
+    const currentIcon = isSelected && selectedIcon ? selectedIcon : icon;
+    
+    if (typeof currentIcon === 'string') {
+      return <img src={currentIcon} alt="icon" width={40} height={40} />;
+    } else if (currentIcon && 'src' in currentIcon) {
+      return <img src={(currentIcon as StaticImageData).src} alt="icon" width={40} height={40} />;
+    } else if (currentIcon) {
+      const IconComponent = currentIcon;
+      return <IconComponent width={40} height={40} className="" />;
     }
     return null;
   };

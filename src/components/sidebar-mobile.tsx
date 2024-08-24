@@ -39,9 +39,9 @@ export function SidebarMobile(props: SidebarMobileProps) {
       </SheetTrigger>
       <SheetContent side='left' className='px-3 py-4 justify-center'>
         <SheetHeader className='flex flex-row space-y-0'>
-        <div className='mt-5 flex flex-col justify-center items-center mb-2'>
-          <Image src={zu_icon} alt="icon" width={40} height={40} />
-        </div>
+          <div className='mt-5 flex flex-col justify-center items-center mb-2'>
+            <Image src={zu_icon} alt="icon" width={40} height={40} />
+          </div>
           {/* <SheetClose asChild>
             <Button className='h-7 w-7 p-0 right-0' variant='ghost'>
               <X size={15} />
@@ -49,13 +49,15 @@ export function SidebarMobile(props: SidebarMobileProps) {
           </SheetClose> */}
         </SheetHeader>
         <div className='h-full'>
-        <div className='flex flex-col gap-1'>
+          <div className='flex flex-col gap-1'>
             {props.sidebarItems.links.map((link, index) => (
               <Link key={index} href={link.href}>
                 <SidebarButton
                   variant={pathname === link.href ? 'default' : 'ghost'}
                   icon={link.icon}
-                  className='justify-start pr-2 pl-2 w-10 h-10 object-cover'
+                  selectedIcon={link.selectedIcon}
+                  isSelected={pathname === link.href}
+                  className='justify-start pr-2 pl-2 w-10 h-10 object-cover focus:fill-white'
                 >
                   {link.label}
                 </SidebarButton>
@@ -63,22 +65,16 @@ export function SidebarMobile(props: SidebarMobileProps) {
             ))}
             {props.sidebarItems.extras}
           </div>
-          <div className='absolute w-full bottom-4 px-1 left-0'>
-            <Separator className='absolute -top-3 left-0 w-full' />
+          <div className='absolute w-full bottom-4 px-1'>
+            {/* <Separator className='absolute -top-3 w-full' /> */}
             <Drawer>
-              <DrawerTrigger asChild>
-              <Button variant='ghost' className='w-full justify-start'>
-                  <div className='flex justify-between items-center'>
-                    <div className='flex gap-2'>
-                      <Image src={avatarImg} alt="User Avatar" className='w-full h-full object-cover' />
-                    </div>
-                  </div>
-                </Button>
+              <DrawerTrigger asChild className='flex justify-center'>
+                <Image src={avatarImg} alt="User Avatar" className='' />
               </DrawerTrigger>
               <DrawerContent className='mb-2 p-2'>
                 <div className='flex flex-col space-y-2 mt-2'>
                   <Link href='/'>
-                    <SidebarButton size='sm' icon={Settings} className='w-full'>
+                    <SidebarButton size='sm' icon={Settings} className='w-full '>
                       Account Settings
                     </SidebarButton>
                   </Link>
