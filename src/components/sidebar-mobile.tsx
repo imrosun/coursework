@@ -13,9 +13,7 @@ import { LogOut, Menu, MoreHorizontal, Settings, X } from 'lucide-react';
 import Link from 'next/link';
 import { SidebarButtonSheet as SidebarButton } from './sidebar-button';
 import { usePathname } from 'next/navigation';
-import { Separator } from './ui/separator';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import Image from 'next/image';
 import zu_icon from "@/assets/zu_icon.svg";
 import avatarImg from "@/assets/bottom_icon.svg";
@@ -66,7 +64,6 @@ export function SidebarMobile(props: SidebarMobileProps) {
             {props.sidebarItems.extras}
           </div>
           <div className='absolute w-full bottom-4 px-1'>
-            {/* <Separator className='absolute -top-3 w-full' /> */}
             <Drawer>
               <DrawerTrigger asChild className='flex justify-center'>
                 <Image src={avatarImg} alt="User Avatar" className='' />

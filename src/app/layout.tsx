@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Sidebar } from '@/components/sidebar';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,14 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' 
-    className='bg-[#e5ecf3]'
-    >
+    <html lang='en' className='bg-[#e5ecf3]'>
       <body className={inter.className}>
-          <Sidebar />
-        <main 
-        // className='mx-5 mt-16 sm:ml-[100px] sm:mt-3'
-        >{children}</main>
+        <Sidebar />
+        <main className='bg-[#e5ecf3]'>{children}</main>
+        <Toaster />
       </body>
     </html>
   );

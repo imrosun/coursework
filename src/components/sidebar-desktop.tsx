@@ -4,8 +4,7 @@ import { SidebarButton } from './sidebar-button';
 import { SidebarItems } from '@/types';
 import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Button } from './ui/button';
-import { LogOut, MoreHorizontal, Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import avatarImg from "@/assets/bottom_icon.svg";
 import Image from 'next/image';
@@ -14,7 +13,7 @@ import zu from "@/assets/zu.svg";
 import star from "@/assets/star_half.svg";
 import calender from "@/assets/calender.svg";
 import note from "@/assets/note_stack.svg";
-import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface SidebarDesktopProps {
   sidebarItems: SidebarItems;
@@ -25,19 +24,24 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
 
   return (
     <div className=''>
-      <aside className='w-[50px] max-w-xs h-screen fixed left-2 bottom-2 top-2 bg-white rounded-2xl z-40'>
+      {/* Sidebar on the left */}
+      <motion.aside
+        initial={{ x: '100px' }}
+        animate={{ x: 0 }}
+        transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+        className='w-[50px] max-w-xs h-screen fixed left-2 bottom-2 top-2 bg-white rounded-2xl z-40'
+      >
         <div className='mt-2 flex flex-col justify-center items-center'>
           <Image src={zu_icon} alt="icon" width={40} height={40} />
           <div className='mt-4'>
             <div className='flex flex-col gap-1'>
-
               {props.sidebarItems.links.map((link, index) => (
                 <Link key={index} href={link.href}>
                   <SidebarButton
                     variant={pathname === link.href ? 'default' : 'ghost'}
                     icon={link.icon}
-                    selectedIcon={link.selectedIcon}  // Make sure to provide a selected icon if different
-                    isSelected={pathname === link.href}  // Determines if this button is selected
+                    selectedIcon={link.selectedIcon}
+                    isSelected={pathname === link.href}
                     className='justify-start pr-2 pl-2 w-10 h-10 object-cover focus:fill-white'
                   >
                     {link.label}
@@ -47,7 +51,6 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
               {props.sidebarItems.extras}
             </div>
             <div className='absolute bottom-3 w-full '>
-              {/* <Separator className='absolute -top-3 left-0 w-full' /> */}
               <Popover>
                 <PopoverTrigger asChild className='flex justify-center'>
                   <Image src={avatarImg} alt="User Avatar" />                 
@@ -68,9 +71,15 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
             </div>
           </div>
         </div>
-      </aside>
+      </motion.aside>
 
-      <div className='flex flex-col fixed right-2 top-2 gap-2 items-end'>
+      {/* Sidebar on the right */}
+      <motion.div
+        initial={{ x: '-100px' }}
+        animate={{ x: 0 }}
+        transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+        className='flex flex-col fixed right-2 top-2 gap-2 items-end'
+      >
         <div className='flex flex-col gap-1 items-end'>
           <div className='bg-white rounded-2xl p-1 inline-flex'>
             <Image src={zu} alt="zu" />
@@ -80,12 +89,10 @@ export function SidebarDesktop(props: SidebarDesktopProps) {
             <Image src={star} alt="star" />
             <h4 className='font-bold text-[#5B6170] text-sm'>24</h4>
           </div>
-
         </div>
         <Image src={calender} alt="zu" />
         <Image src={note} alt="zu" />
-      </div>
-
+      </motion.div>
     </div>
   );
 }

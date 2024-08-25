@@ -13,6 +13,7 @@ interface AnalyzedData {
   words_count: number;
   score: string;
   language: string;
+  timestamp: number;
 }
 
 // Define the shape of the form data
@@ -77,6 +78,7 @@ export const useFormStore = create<FormData>((set, get) => ({
       words_count: wordsCount,
       score: score,
       language: language,
+      timestamp: Date.now()
     };
 
     set((state) => ({

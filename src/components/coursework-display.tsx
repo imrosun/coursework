@@ -16,13 +16,16 @@ export const CourseworkDisplay = () => {
     setShowAll((prevShowAll) => !prevShowAll);
   };
 
-  const itemsToDisplay = showAll ? analyzedData : analyzedData.slice(0, 2); // Show all items or only the first 2
+  const sortedData = [...analyzedData].sort((a, b) => b.timestamp - a.timestamp);
+
+  const itemsToDisplay = showAll ? sortedData : sortedData.slice(0, 2); // Show all items or only the first 2
 
   return (
     <div className="sm:mx-40 px-10">
       <h2 className="mb-4 mt-4 font-bold text-[#5B6170]">My Coursework</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {analyzedData.length > 0 ? (
+      
+      {sortedData.length > 0 ? (
           itemsToDisplay.map((data, index) => (
             <div
               key={data.coursework_id}
@@ -38,7 +41,7 @@ export const CourseworkDisplay = () => {
                 <div className="flex-wrap-reverse">
                   <div className="inline-flex gap-1 mr-2 bg-white p-1 rounded-xl text-[#5B6170] text-sm font-bold">
                     <Image src={courseworkIcon} alt="coursework" />
-                    <h5>{data.coursework_type}</h5>
+                    <h5>{data.subject}</h5>
                   </div>
                   <div className="inline-flex gap-1 mr-2 bg-white p-1 rounded-xl text-[#5B6170] text-sm font-bold">
                     <Image src={clockIcon} alt="clock" />

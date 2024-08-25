@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+- Next.js
+- Tailwindcss
+- TypeScript
+- Shadcn ui
+- Zustand [persist local storage]
+- Framer motion
+
 ## Getting Started
 
 First, clone the repository:

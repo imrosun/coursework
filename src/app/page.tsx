@@ -6,12 +6,12 @@ import { CourseworkDisplay } from "@/components/coursework-display";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import multiple_star from "@/assets/multiple_star.svg";
 import upload_file from "@/assets/upload_file.svg";
 import poster from "@/assets/Image.svg";
 import { ExploreCoursework } from "@/components/explore-coursework";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const {
@@ -64,54 +64,60 @@ export default function Home() {
     event.preventDefault();
   };
 
-  // const handleEvaluate = async () => {
-  //   if (file) {
-  //     try {
-  //       await analyzeDocument(file);
-  //       toast({
-  //         title: "Success!",
-  //         description: "Document analyzed successfully.",
-  //       });
-  //     } catch (error) {
-  //       toast({
-  //         variant: "destructive",
-  //         title: "Uh oh! Something went wrong.",
-  //         description: `There was a problem with your request: ${(error as Error).message}`,
-  //         action: <ToastAction altText="Try again">Try again</ToastAction>,
-  //       });
-  //     }
-  //   }
-  // };
-
-  const handleEvaluate = () => {
+  const handleEvaluate = async () => {
     if (file) {
-      analyzeDocument(file);
-      const analyzedData = {
-        coursework_id: Date.now(),
-        document: file.name.split('.').pop() || '',
-        coursework_type: course,
-        subject: subject,
-        title: essayTitle,
-        sub_title: 'How does the temperature of a Copper pipe affect the time it takes a magnet to fall thought',
-        time: 18,
-        words_count: 2388,
-        score: '7/7',
-        language: 'English'
-        
-      };
-      saveData(analyzedData);
+      try {
+        const analyzedData = {
+          coursework_id: Date.now(),
+          document: file.name.split('.').pop() || '',
+          coursework_type: course,
+          subject: subject,
+          title: essayTitle,
+          sub_title: 'How does the temperature of a Copper pipe affect the time it takes a magnet to fall through',
+          time: 18,
+          words_count: 2388,
+          score: '7/7',
+          language: 'English',
+          timestamp: Date.now(),
+        };
+        saveData(analyzedData);
+        resetFields();
+        toast({
+          title: "Data Saved Successfully!",
+          description: "Your coursework has been analyzed and saved successfully.",
+        });
+  
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to analyze the document. Please try again.";
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+        });
+      }
+    } else {
       toast({
-        title: "Data Saved Successfully!",
-        description: "Your coursework has been analyzed and saved successfully.",
+        variant: "destructive",
+        title: "Error",
+        description: "No file selected. Please select a file to analyze.",
       });
-      resetFields();
     }
   };
 
   const isFormComplete = file && course && subject && essayTitle;
 
   return (
-    <div className="bg-[#e5ecf3] flex flex-col">
+    <motion.div
+    initial={{ y: '-50vh' }}  
+    animate={{ y: '0' }}    
+    transition={{ 
+      type: 'tween', ease: 'easeInOut',
+      stiffness: 50,  
+      damping: 20,     
+      duration: 1.5 }}
+
+      >
+    <div className="flex flex-col">
       <div className="sm:mx-40 pl-10 pr-10 pt-10 flex justify-between gap-10 mb-4">
 
         <div className="grid text-3xl font-semibold">
@@ -158,7 +164,11 @@ export default function Home() {
             <div className="flex flex-row gap-5">
               <Input placeholder="How nation works...." className="w-[380px] text-[#7A8196] focus:border-[#FF4800]" value={essayTitle} onChange={(e) => setEssayTitle(e.target.value)} />
             </div>
-            <Button variant={isFormComplete ? "default" : "gray"} className="mt-4 gap-2" disabled={!isFormComplete} onClick={handleEvaluate}>
+            <Button variant={isFormComplete ? "default" : "gray"}
+              className="mt-4 gap-2"
+              disabled={!isFormComplete}
+              onClick={handleEvaluate}
+            >
               <Image className="" src={multiple_star} width={18} height={18} alt="button" />
               Evaluate your Score
             </Button>
@@ -173,5 +183,6 @@ export default function Home() {
       <CourseworkDisplay />
       <ExploreCoursework />
     </div>
+    </motion.div>
   );
 };
